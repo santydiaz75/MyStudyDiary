@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diario de Estudio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="contenedor">
+    <h1>Diario de Estudio</h1>
+
+    <section class="racha">
+      <div class="racha-numero"><span id="racha">0</span> 🔥</div>
+      <p class="racha-texto">días seguidos estudiando</p>
+      <p class="racha-mejor" id="mejor-racha">Mejor racha: 0 días</p>
+    </section>
+
+    <form id="formulario" class="tarjeta" novalidate>
+      <h2 id="titulo-formulario">Nueva sesión</h2>
+
+      <label for="fecha">Fecha</label>
+      <input type="date" id="fecha" required>
+
+      <label for="tema">Tema</label>
+      <input type="text" id="tema" placeholder="¿Qué has estudiado?" required>
+
+      <label for="minutos">Minutos</label>
+      <input type="number" id="minutos" min="1" step="1" placeholder="30" required>
+
+      <p id="error" class="error" role="alert"></p>
+
+      <button type="submit" id="boton-guardar">Guardar sesión</button>
+      <button type="button" id="boton-cancelar" class="boton-secundario" hidden>Cancelar</button>
+    </form>
+
+    <section class="tarjeta">
+      <h2>Sesiones</h2>
+      <ul id="lista" class="lista"></ul>
+      <p id="vacio" class="vacio">Todavía no hay sesiones.</p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
