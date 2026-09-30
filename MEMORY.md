@@ -7,6 +7,7 @@ sesiones.
 - v2: "Mejor racha" mostrada bajo la racha actual (`calcularMejorRacha` en `app.js`).
 - v3: editar sesiones con botón "Editar" en cada fila (reutiliza el formulario).
 - Datos en localStorage.
+- `README.md` añadido a petición del usuario (describe el proyecto).
 ## Decisiones (y por qué)
 - Sin backend ni dependencias: cualquiera debe poder abrirlo con doble clic.
 - Fecha editable en el formulario: permite registrar días pasados y ver la racha crecer.
