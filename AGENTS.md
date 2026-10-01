@@ -7,8 +7,11 @@ Web para registrar sesiones de estudio y motivarse con la racha de días seguido
 - `prompts/prompt.md`: especificación original; consúltala para saber el alcance.
 
 ## Comandos
-- No hay comandos de build, lint ni test.
+- Tests: `node --test`
 - Ejecutar: abrir `index.html` con doble clic (`file://`). En Windows: `start index.html`.
+
+## Reglas
+- Lee `docs/constitution.md` y la spec activa (`specs/NNN-*/`) antes de tocar código. 
 
 ## Convenciones
 - Toda la interfaz en español; nombres de variables y funciones también en español (`calcularRacha`, `formatearFecha`).
@@ -19,7 +22,8 @@ Web para registrar sesiones de estudio y motivarse con la racha de días seguido
 ## Reglas de dominio / trampas conocidas
 - Racha (`calcularRacha`): días consecutivos con al menos una sesión que terminan hoy. Si hoy no hay sesión pero ayer sí, la racha sigue viva.
 - Mejor racha (`calcularMejorRacha`): mayor secuencia de días consecutivos con sesión en todo el historial. Se calcula a partir de las sesiones, no se guarda. Para comparar días consecutivos, usar `Date` a las 12:00 + `setDate` + `formatearFecha`, nunca restar timestamps.
-- Editar sesión: modifica `fecha`, `tema` y `minutos` de la sesión con ese `id`, sin cambiar el `id` ni el formato de los datos. Reutiliza el formulario (`idEditando`). No hay borrado.
+- Editar sesión: modifica `fecha`, `tema` y `minutos` de la sesión con ese `id`, sin cambiar el `id` ni el formato de los datos. Reutiliza el formulario (`idEditando`).
+- Borrar sesión: elimina una sola sesión por `id` (`borrarSesion`), siempre tras `confirm()`. No hay borrado en bloque.
 - Fechas siempre locales, nunca UTC: no usar `toISOString()`. Usar `formatearFecha` (`AAAA-MM-DD`).
 - localStorage: clave `diarioEstudioSesiones`, sesiones con forma `{id, fecha, tema, minutos}`.
 - Validación: tema obligatorio, minutos enteros > 0.
@@ -32,11 +36,14 @@ Web para registrar sesiones de estudio y motivarse con la racha de días seguido
 ## Límites
 - ✅ Siempre: mantener textos en español, usar fechas locales, mantener el funcionamiento con doble clic, actualizar `MEMORY.md` al terminar cada tarea.
 - ⚠️ Pregunta antes: añadir dependencias, crear archivos nuevos, cambiar la clave o el formato de los datos en localStorage.
-- 🚫 Nunca: usar frameworks, librerías, servidores o pasos de compilación; usar UTC para fechas; borrar datos guardados del usuario.
+- 🚫 Nunca: usar frameworks, librerías, servidores o pasos de compilación; usar UTC para fechas; borrar datos guardados del usuario sin que lo pida y confirme explícitamente (solo una sesión cada vez, nunca en bloque).
 
 ## Verificación
 - Abrir `index.html` en el navegador: añadir una sesión de hoy (racha 1), añadir ayer y anteayer (racha 3), recargar (los datos persisten), probar tema vacío y minutos 0 (mensaje de error).
+- Borrar una sesión: cancelar la confirmación no cambia nada; aceptarla la elimina, recalcula las rachas y persiste al recargar.
 - Revisar la consola del navegador: sin errores.
+- No hay tests automáticos. Después de cada cambio, verifica con el MCP de Chrome DevTools: abre `index.html`, prueba la funcionalidad, revisa la consola y comprueba la
+vista móvil. 
 
 ## Memoria
 - Al empezar, lee `MEMORY.md` para conocer el estado del proyecto y las decisiones

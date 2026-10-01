@@ -1,3 +1,13 @@
+:root {
+  --papel: #f7f5ef;
+  --tinta: #1e2a3a;
+  --tinta-suave: #5d6878;
+  --boli: #2b50c8;
+  --corrector: #c8342b;
+  --resaltador: #ffe66b;
+  --linea: #d9dee8;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -5,113 +15,281 @@
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background: #f3f4f8;
-  color: #1f2937;
+  background: var(--papel);
+  color: var(--tinta);
+  line-height: 1.5;
 }
 
 .contenedor {
   max-width: 480px;
   margin: 0 auto;
-  padding: 24px 16px 48px;
+  padding: 32px 20px 64px;
+}
+
+h1,
+h2,
+.racha-numero {
+  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
 }
 
 h1 {
-  text-align: center;
-  margin: 0 0 16px;
-  font-size: 1.5rem;
+  margin: 0 0 24px;
+  font-size: 1.75rem;
+  line-height: 1.2;
 }
 
 h2 {
-  margin: 0 0 12px;
-  font-size: 1.1rem;
+  margin: 0 0 8px;
+  font-size: 1.25rem;
 }
 
 .racha {
-  text-align: center;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  color: #fff;
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 16px;
+  padding-bottom: 20px;
+  margin-bottom: 28px;
+  border-bottom: 2px solid var(--tinta);
+}
+
+.racha-principal {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
 }
 
 .racha-numero {
-  font-size: 4rem;
+  font-size: 4.5rem;
   font-weight: 700;
   line-height: 1;
+  background: linear-gradient(transparent 62%, var(--resaltador) 62%);
+  padding: 0 6px;
 }
 
 .racha-texto {
-  margin: 8px 0 0;
-  opacity: 0.9;
+  font-size: 1.05rem;
 }
 
-.racha-mejor {
-  margin: 8px 0 0;
-  font-size: 0.9rem;
-  opacity: 0.8;
+.racha-dias {
+  display: flex;
+  gap: 6px;
+  margin: 20px 0 16px;
+}
+
+.casilla {
+  flex: 1;
+  max-width: 48px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--tinta-suave);
+  border: 1.5px solid var(--linea);
+  border-radius: 4px;
+}
+
+.casilla-marcada {
+  color: #fff;
+  background: var(--boli);
+  border-color: var(--boli);
+}
+
+.casilla-hoy {
+  outline: 2px solid var(--tinta);
+  outline-offset: 2px;
+}
+
+.racha-dato {
+  margin: 2px 0 0;
+  color: var(--tinta-suave);
+  font-size: 0.95rem;
 }
 
 .tarjeta {
-  background: #fff;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 32px;
+}
+
+.mapa-cuerpo {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.mapa-etiquetas {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  gap: 3px;
+  font-size: 0.7rem;
+  color: var(--tinta-suave);
+  text-align: center;
+}
+
+.mapa-etiquetas span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mapa-cuadricula {
+  flex: 1;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(7, auto);
+  gap: 3px;
+}
+
+.mapa-cuadricula .mapa-casilla {
+  aspect-ratio: 1;
+  min-height: 0;
+}
+
+.mapa-casilla {
+  display: inline-block;
+  width: 100%;
+  border: 1px solid var(--linea);
+  border-radius: 3px;
+  background: var(--papel);
+}
+
+.mapa-casilla.nivel-1 {
+  background: #d6def5;
+  border-color: #d6def5;
+}
+
+.mapa-casilla.nivel-2 {
+  background: #a9baee;
+  border-color: #a9baee;
+}
+
+.mapa-casilla.nivel-3 {
+  background: #6b86dc;
+  border-color: #6b86dc;
+}
+
+.mapa-casilla.nivel-4 {
+  background: var(--boli);
+  border-color: var(--boli);
+}
+
+.mapa-casilla.futuro {
+  border-style: dashed;
+  opacity: 0.45;
+}
+
+.mapa-casilla.hoy {
+  outline: 2px solid var(--tinta);
+  outline-offset: 1px;
+}
+
+.mapa-casilla:focus-visible {
+  outline: 2px solid var(--tinta);
+  outline-offset: 1px;
+}
+
+.mapa-detalle {
+  min-height: 1.5em;
+  margin: 12px 0 8px;
+  font-size: 0.95rem;
+}
+
+.mapa-leyenda {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--tinta-suave);
+}
+
+.mapa-leyenda .mapa-casilla {
+  width: 14px;
+  height: 14px;
+}
+
+.mapa-tramos {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--tinta-suave);
 }
 
 label {
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
-  margin: 12px 0 4px;
+  margin: 14px 0 2px;
 }
 
 input {
   width: 100%;
-  padding: 10px 12px;
+  padding: 8px 2px;
   font-size: 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
   font-family: inherit;
+  color: var(--tinta);
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--linea);
+  border-radius: 0;
 }
 
 input:focus {
-  outline: 2px solid #6366f1;
-  border-color: transparent;
+  outline: none;
+  border-bottom-color: var(--boli);
+  box-shadow: 0 2px 0 var(--boli);
 }
 
 button {
   width: 100%;
-  margin-top: 16px;
+  margin-top: 20px;
   padding: 12px;
   font-size: 1rem;
   font-weight: 600;
+  font-family: inherit;
   color: #fff;
-  background: #6366f1;
+  background: var(--boli);
   border: none;
-  border-radius: 10px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
 button:hover {
-  background: #4f46e5;
+  background: #213fa0;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--tinta);
+  outline-offset: 2px;
 }
 
 .boton-secundario {
-  color: #4f46e5;
-  background: #eef2ff;
+  color: var(--boli);
+  background: transparent;
+  text-decoration: underline;
 }
 
 .boton-secundario:hover {
-  background: #e0e7ff;
+  background: transparent;
+  color: #213fa0;
 }
 
-.boton-editar {
+.boton-editar,
+.boton-borrar {
   width: auto;
-  margin: 4px 0 0;
-  padding: 4px 10px;
+  margin: 2px 0 0;
+  padding: 2px 4px;
   font-size: 0.85rem;
+}
+
+.boton-borrar {
+  color: var(--corrector);
+}
+
+.boton-borrar:hover {
+  background: transparent;
+  color: #9a241d;
+}
+
+.sesion-botones {
+  display: flex;
+  gap: 8px;
 }
 
 .sesion-derecha {
@@ -121,7 +299,7 @@ button:hover {
 }
 
 .error {
-  color: #dc2626;
+  color: var(--corrector);
   font-size: 0.9rem;
   margin: 12px 0 0;
   min-height: 1.2em;
@@ -137,8 +315,8 @@ button:hover {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--linea);
 }
 
 .lista li:last-child {
@@ -152,16 +330,16 @@ button:hover {
 
 .sesion-fecha {
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--tinta-suave);
 }
 
 .sesion-minutos {
   white-space: nowrap;
-  color: #6366f1;
+  color: var(--boli);
   font-weight: 600;
 }
 
 .vacio {
-  color: #6b7280;
+  color: var(--tinta-suave);
   margin: 0;
 }

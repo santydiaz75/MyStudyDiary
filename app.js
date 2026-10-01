@@ -7,6 +7,10 @@ const campoMinutos = document.getElementById("minutos");
 const textoError = document.getElementById("error");
 const textoRacha = document.getElementById("racha");
 const textoMejorRacha = document.getElementById("mejor-racha");
+const textoDiasMes = document.getElementById("dias-mes");
+const contenedorDias = document.getElementById("racha-dias");
+const contenedorMapa = document.getElementById("mapa-calor");
+const textoDetalleMapa = document.getElementById("mapa-detalle");
 const lista = document.getElementById("lista");
 const textoVacio = document.getElementById("vacio");
 
@@ -16,14 +20,6 @@ const botonCancelar = document.getElementById("boton-cancelar");
 
 let sesiones = cargarSesiones();
 let idEditando = null;
-
-// Devuelve una fecha local como texto "AAAA-MM-DD" (sin usar UTC)
-function formatearFecha(fecha) {
-  const anio = fecha.getFullYear();
-  const mes = String(fecha.getMonth() + 1).padStart(2, "0");
-  const dia = String(fecha.getDate()).padStart(2, "0");
-  return anio + "-" + mes + "-" + dia;
-}
 
 function cargarSesiones() {
   try {
@@ -76,6 +72,18 @@ function calcularMejorRacha() {
   return mejor;
 }
 
+function calcularDiasEsteMes() {
+  const hoy = formatearFecha(new Date());
+  const mes = hoy.slice(0, 7);
+  const dias = new Set(sesiones.map((s) => s.fecha));
+
+  let total = 0;
+  dias.forEach((texto) => {
+    if (texto.startsWith(mes) && texto <= hoy) total++;
+  });
+  return total;
+}
+
 function empezarEdicion(sesion) {
   idEditando = sesion.id;
   campoFecha.value = sesion.fecha;
@@ -100,9 +108,68 @@ function cancelarEdicion() {
   botonCancelar.hidden = true;
 }
 
+function borrarSesion(id) {
+  if (!confirm("¿Borrar esta sesión? No se puede deshacer.")) return;
+
+  sesiones = sesiones.filter((s) => s.id !== id);
+  guardarSesiones();
+  if (idEditando === id) cancelarEdicion();
+  pintar();
+}
+
 function mostrarFecha(texto) {
   const partes = texto.split("-");
   return partes[2] + "/" + partes[1] + "/" + partes[0];
+}
+
+function pintarUltimosDias() {
+  const dias = new Set(sesiones.map((s) => s.fecha));
+  contenedorDias.innerHTML = "";
+
+  for (let atras = 6; atras >= 0; atras--) {
+    const dia = new Date();
+    dia.setHours(12, 0, 0, 0);
+    dia.setDate(dia.getDate() - atras);
+
+    const casilla = document.createElement("span");
+    casilla.className = "casilla";
+    if (dias.has(formatearFecha(dia))) casilla.classList.add("casilla-marcada");
+    if (atras === 0) casilla.classList.add("casilla-hoy");
+    casilla.textContent = dia
+      .toLocaleDateString("es-ES", { weekday: "narrow" })
+      .toUpperCase();
+    contenedorDias.appendChild(casilla);
+  }
+}
+
+function pintarMapaCalor() {
+  const semanas = construirMapaCalor(sesiones, new Date());
+  contenedorMapa.innerHTML = "";
+
+  semanas.forEach((semana) => {
+    semana.forEach((dia) => {
+      const casilla = document.createElement("span");
+      casilla.className = "mapa-casilla nivel-" + dia.nivel;
+      if (dia.futuro) casilla.classList.add("futuro");
+      if (dia.esHoy) casilla.classList.add("hoy");
+
+      const texto = textoDiaMapa(dia);
+      casilla.title = texto;
+      casilla.setAttribute("aria-label", texto);
+
+      if (!dia.futuro) {
+        casilla.tabIndex = 0;
+      }
+      const mostrarDetalle = () => {
+        textoDetalleMapa.textContent = texto;
+      };
+      casilla.addEventListener("mouseenter", mostrarDetalle);
+      casilla.addEventListener("focus", mostrarDetalle);
+      casilla.addEventListener("click", mostrarDetalle);
+
+      contenedorMapa.appendChild(casilla);
+    });
+  });
 }
 
 function pintar() {
@@ -112,6 +179,11 @@ function pintar() {
   textoMejorRacha.textContent =
     "Mejor racha: " + mejor + (mejor === 1 ? " día" : " días");
 
+  const diasMes = calcularDiasEsteMes();
+  textoDiasMes.textContent = "Días estudiados este mes: " + diasMes;
+
+  pintarUltimosDias();
+  pintarMapaCalor();
   const ordenadas = sesiones.slice().sort((a, b) => {
     if (a.fecha !== b.fecha) return a.fecha < b.fecha ? 1 : -1;
     return b.id - a.id;
@@ -140,9 +212,19 @@ function pintar() {
     botonEditar.textContent = "Editar";
     botonEditar.addEventListener("click", () => empezarEdicion(s));
 
+    const botonBorrar = document.createElement("button");
+    botonBorrar.type = "button";
+    botonBorrar.className = "boton-secundario boton-borrar";
+    botonBorrar.textContent = "Borrar";
+    botonBorrar.addEventListener("click", () => borrarSesion(s.id));
+
+    const botones = document.createElement("div");
+    botones.className = "sesion-botones";
+    botones.append(botonEditar, botonBorrar);
+
     const derecha = document.createElement("div");
     derecha.className = "sesion-derecha";
-    derecha.append(minutos, botonEditar);
+    derecha.append(minutos, botones);
 
     li.append(info, derecha);
     lista.appendChild(li);

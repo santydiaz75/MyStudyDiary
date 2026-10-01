@@ -11,9 +11,34 @@
     <h1>Diario de Estudio</h1>
 
     <section class="racha">
-      <div class="racha-numero"><span id="racha">0</span> 🔥</div>
-      <p class="racha-texto">días seguidos estudiando</p>
-      <p class="racha-mejor" id="mejor-racha">Mejor racha: 0 días</p>
+      <div class="racha-principal">
+        <span class="racha-numero" id="racha">0</span>
+        <span class="racha-texto">días seguidos estudiando</span>
+      </div>
+      <div class="racha-dias" id="racha-dias" aria-label="Últimos 7 días"></div>
+      <p class="racha-dato" id="mejor-racha">Mejor racha: 0 días</p>
+      <p class="racha-dato" id="dias-mes">Días estudiados este mes: 0</p>
+    </section>
+
+    <section class="tarjeta mapa">
+      <h2>Últimas 12 semanas</h2>
+      <div class="mapa-cuerpo">
+        <div class="mapa-etiquetas" aria-hidden="true">
+          <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+        </div>
+        <div class="mapa-cuadricula" id="mapa-calor" role="group" aria-label="Mapa de calor de las últimas 12 semanas"></div>
+      </div>
+      <p class="mapa-detalle" id="mapa-detalle" aria-live="polite">Toca un día para ver sus minutos.</p>
+      <div class="mapa-leyenda">
+        <span>Menos</span>
+        <span class="mapa-casilla nivel-0"></span>
+        <span class="mapa-casilla nivel-1"></span>
+        <span class="mapa-casilla nivel-2"></span>
+        <span class="mapa-casilla nivel-3"></span>
+        <span class="mapa-casilla nivel-4"></span>
+        <span>Más</span>
+      </div>
+      <p class="mapa-tramos">Minutos al día: 0 · 1–29 · 30–59 · 60–119 · 120 o más</p>
     </section>
 
     <form id="formulario" class="tarjeta" novalidate>
@@ -41,6 +66,7 @@
     </section>
   </main>
 
+  <script src="logica.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
