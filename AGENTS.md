@@ -26,6 +26,7 @@ Web para registrar sesiones de estudio y motivarse con la racha de días seguido
 - Borrar sesión: elimina una sola sesión por `id` (`borrarSesion`), siempre tras `confirm()`. No hay borrado en bloque.
 - Fechas siempre locales, nunca UTC: no usar `toISOString()`. Usar `formatearFecha` (`AAAA-MM-DD`).
 - localStorage: clave `diarioEstudioSesiones`, sesiones con forma `{id, fecha, tema, minutos}`.
+- localStorage: clave `diarioEstudioObjetivoSemanal`, entero 1–10080 guardado como número; valor inválido o ausente = sin objetivo.
 - Validación: tema obligatorio, minutos enteros > 0.
 
 ## Forma de trabajar
