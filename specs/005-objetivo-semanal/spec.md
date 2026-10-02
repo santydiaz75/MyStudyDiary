@@ -1,5 +1,5 @@
 # Spec 005 — Objetivo semanal de estudio
-Estado: borrador
+Estado: implementada
 ## Contexto y objetivo
 La racha y el mapa de calor muestran la constancia, pero no dan una meta concreta de cantidad. Un objetivo semanal de minutos permite a la persona usuaria fijar cuánto quiere estudiar cada semana y ver cuánto lleva, lo que refuerza la motivación para cumplirlo, que es el propósito del diario.
 ## Usuarios / actores
