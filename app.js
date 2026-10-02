@@ -18,8 +18,52 @@ const tituloFormulario = document.getElementById("titulo-formulario");
 const botonGuardar = document.getElementById("boton-guardar");
 const botonCancelar = document.getElementById("boton-cancelar");
 
+const CLAVE_OBJETIVO = "diarioEstudioObjetivoSemanal";
+
+const textoObjetivoVacio = document.getElementById("objetivo-vacio");
+const contenedorObjetivo = document.getElementById("objetivo-progreso");
+const textoObjetivo = document.getElementById("objetivo-texto");
+const barraObjetivo = document.getElementById("objetivo-barra");
+const textoObjetivoCumplido = document.getElementById("objetivo-cumplido");
+const botonQuitarObjetivo = document.getElementById("boton-quitar-objetivo");
+const formularioObjetivo = document.getElementById("formulario-objetivo");
+const campoObjetivo = document.getElementById("objetivo-minutos");
+const textoErrorObjetivo = document.getElementById("error-objetivo");
+
 let sesiones = cargarSesiones();
 let idEditando = null;
+let objetivo = cargarObjetivo();
+
+function cargarObjetivo() {
+  try {
+    return leerObjetivoGuardado(localStorage.getItem(CLAVE_OBJETIVO));
+  } catch (e) {
+    return null;
+  }
+}
+
+function guardarObjetivo(valor) {
+  try {
+    localStorage.setItem(CLAVE_OBJETIVO, JSON.stringify(valor));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function quitarObjetivoGuardado() {
+  try {
+    localStorage.removeItem(CLAVE_OBJETIVO);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function rellenarFormularioObjetivo() {
+  campoObjetivo.value = objetivo === null ? "" : objetivo;
+  textoErrorObjetivo.textContent = "";
+}
 
 function cargarSesiones() {
   try {
@@ -172,7 +216,22 @@ function pintarMapaCalor() {
   });
 }
 
+function pintarObjetivo() {
+  const hayObjetivo = objetivo !== null;
+  textoObjetivoVacio.hidden = hayObjetivo;
+  contenedorObjetivo.hidden = !hayObjetivo;
+  botonQuitarObjetivo.hidden = !hayObjetivo;
+  if (!hayObjetivo) return;
+
+  const progreso = calcularProgresoSemanal(sesiones, objetivo, new Date());
+  textoObjetivo.textContent = progreso.texto;
+  barraObjetivo.style.width = progreso.anchoBarra + "%";
+  barraObjetivo.parentElement.setAttribute("aria-valuenow", progreso.anchoBarra);
+  textoObjetivoCumplido.hidden = !progreso.cumplido;
+}
+
 function pintar() {
+  pintarObjetivo();
   const rachaActual = calcularRacha();
   const mejor = Math.max(calcularMejorRacha(), rachaActual);
   textoRacha.textContent = rachaActual;
@@ -277,6 +336,42 @@ formulario.addEventListener("submit", (evento) => {
 });
 
 botonCancelar.addEventListener("click", cancelarEdicion);
+
+formularioObjetivo.addEventListener("submit", (evento) => {
+  evento.preventDefault();
+
+  const resultado = validarObjetivo(campoObjetivo.value);
+  if (!resultado.valido) {
+    textoErrorObjetivo.textContent =
+      "Introduce un número entero de minutos entre 1 y 10080.";
+    return;
+  }
+  if (!guardarObjetivo(resultado.valor)) {
+    textoErrorObjetivo.textContent =
+      "No se pudo guardar el objetivo. Inténtalo de nuevo.";
+    return;
+  }
+
+  objetivo = resultado.valor;
+  rellenarFormularioObjetivo();
+  pintar();
+});
+
+botonQuitarObjetivo.addEventListener("click", () => {
+  if (!confirm("¿Quitar el objetivo semanal? Tus sesiones no se borrarán.")) return;
+
+  if (!quitarObjetivoGuardado()) {
+    textoErrorObjetivo.textContent =
+      "No se pudo guardar el objetivo. Inténtalo de nuevo.";
+    return;
+  }
+
+  objetivo = null;
+  rellenarFormularioObjetivo();
+  pintar();
+});
+
+rellenarFormularioObjetivo();
 
 campoFecha.value = formatearFecha(new Date());
 pintar();

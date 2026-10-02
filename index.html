@@ -20,6 +20,25 @@
       <p class="racha-dato" id="dias-mes">Días estudiados este mes: 0</p>
     </section>
 
+    <section class="tarjeta objetivo">
+      <h2>Objetivo semanal</h2>
+      <p id="objetivo-vacio" class="objetivo-vacio">Aún no tienes objetivo semanal. Fíjalo para ver tu progreso.</p>
+      <div id="objetivo-progreso" hidden>
+        <p class="objetivo-texto" id="objetivo-texto"></p>
+        <div class="barra" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Progreso del objetivo semanal">
+          <span class="barra-relleno" id="objetivo-barra"></span>
+        </div>
+        <p class="objetivo-cumplido" id="objetivo-cumplido" hidden>¡Objetivo cumplido!</p>
+      </div>
+      <form id="formulario-objetivo" novalidate>
+        <label for="objetivo-minutos">Minutos por semana</label>
+        <input type="number" id="objetivo-minutos" min="1" max="10080" step="1" placeholder="300">
+        <p id="error-objetivo" class="error" role="alert"></p>
+        <button type="submit" id="boton-guardar-objetivo">Guardar objetivo</button>
+        <button type="button" id="boton-quitar-objetivo" class="boton-secundario" hidden>Quitar objetivo</button>
+      </form>
+    </section>
+
     <section class="tarjeta mapa">
       <h2>Últimas 12 semanas</h2>
       <div class="mapa-cuerpo">

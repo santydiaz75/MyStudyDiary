@@ -6,6 +6,11 @@ const {
   calcularNivel,
   construirMapaCalor,
   textoDiaMapa,
+  validarObjetivo,
+  leerObjetivoGuardado,
+  calcularLunes,
+  calcularMinutosSemana,
+  calcularProgresoSemanal,
 } = require("./logica.js");
 
 // Aplana la matriz de semanas en una lista de 84 días
@@ -332,4 +337,149 @@ test("textoDiaMapa indica que no hubo estudio", () => {
 test("textoDiaMapa indica que el día futuro aún no ha llegado", () => {
   const dia = { fecha: "2026-10-03", minutos: 0, nivel: 0, futuro: true, esHoy: false };
   assert.strictEqual(textoDiaMapa(dia), "2026-10-03: aún no ha llegado");
+});
+
+test("validarObjetivo acepta enteros entre 1 y 10080 (con espacios)", () => {
+  assert.deepStrictEqual(validarObjetivo("1"), { valido: true, valor: 1 });
+  assert.deepStrictEqual(validarObjetivo("300"), { valido: true, valor: 300 });
+  assert.deepStrictEqual(validarObjetivo(" 300 "), { valido: true, valor: 300 });
+  assert.deepStrictEqual(validarObjetivo("10080"), { valido: true, valor: 10080 });
+});
+
+test("validarObjetivo rechaza vacío, 0, negativos, decimales, notación científica, rango y texto", () => {
+  ["", "   ", "0", "-5", "2.5", "1e3", "10081", "abc", "3 0", null, undefined].forEach((entrada) => {
+    assert.deepStrictEqual(validarObjetivo(entrada), { valido: false }, String(entrada));
+  });
+});
+
+test("leerObjetivoGuardado devuelve el número guardado", () => {
+  assert.strictEqual(leerObjetivoGuardado("300"), 300);
+});
+
+test("leerObjetivoGuardado devuelve null con datos corruptos o fuera de rango", () => {
+  [null, "", '"300"', "2.5", "0", "NaN", "10081", "{", "[300]", "null"].forEach((entrada) => {
+    assert.doesNotThrow(() => leerObjetivoGuardado(entrada), String(entrada));
+    assert.strictEqual(leerObjetivoGuardado(entrada), null, String(entrada));
+  });
+});
+
+test("calcularLunes devuelve el lunes de la semana de hoy", () => {
+  const casos = [
+    [new Date(2026, 8, 28), "2026-09-28"],
+    [new Date(2026, 8, 30), "2026-09-28"],
+    [new Date(2026, 9, 4), "2026-09-28"],
+    [new Date(2027, 0, 1), "2026-12-28"],
+    [new Date(2028, 2, 1), "2028-02-28"],
+    [new Date(2026, 2, 29), "2026-03-23"],
+    [new Date(2026, 9, 25), "2026-10-19"],
+    [new Date(2026, 10, 1), "2026-10-26"],
+  ];
+  casos.forEach(([hoy, esperado]) => {
+    assert.strictEqual(calcularLunes(hoy), esperado, formatearFecha(hoy));
+  });
+});
+
+test("calcularLunes no modifica hoy e ignora la hora", () => {
+  const hoy = new Date(2026, 9, 2, 23, 59);
+  const copia = hoy.getTime();
+  assert.strictEqual(calcularLunes(hoy), "2026-09-28");
+  assert.strictEqual(hoy.getTime(), copia);
+  assert.strictEqual(calcularLunes(new Date(2026, 9, 2, 0, 0)), "2026-09-28");
+});
+
+test("calcularMinutosSemana suma la semana, incluye lunes y hoy, excluye domingo anterior y futuros", () => {
+  const hoy = new Date(2026, 9, 2, 23, 59);
+  const sesiones = [
+    { id: 1, fecha: "2026-09-27", tema: "a", minutos: 100 },
+    { id: 2, fecha: "2026-09-28", tema: "a", minutos: 30 },
+    { id: 3, fecha: "2026-09-28", tema: "b", minutos: 20 },
+    { id: 4, fecha: "2026-10-01", tema: "c", minutos: 15 },
+    { id: 5, fecha: "2026-10-02", tema: "d", minutos: 5 },
+    { id: 6, fecha: "2026-10-03", tema: "e", minutos: 200 },
+  ];
+  assert.strictEqual(calcularMinutosSemana(sesiones, hoy), 70);
+});
+
+test("calcularMinutosSemana sin sesiones devuelve 0", () => {
+  assert.strictEqual(calcularMinutosSemana([], new Date(2026, 9, 2)), 0);
+});
+
+test("calcularMinutosSemana ignora datos no válidos", () => {
+  const f = "2026-10-01";
+  const sesiones = [
+    { fecha: "2026-02-30", minutos: 10 },
+    { fecha: "hola", minutos: 10 },
+    { fecha: f, minutos: "10" },
+    { fecha: f, minutos: NaN },
+    { fecha: f, minutos: -5 },
+    { fecha: f, minutos: 0 },
+    { fecha: f, minutos: 2.5 },
+    null,
+    undefined,
+    42,
+    "texto",
+    { fecha: f },
+    { fecha: f, minutos: 7 },
+  ];
+  assert.strictEqual(calcularMinutosSemana(sesiones, new Date(2026, 9, 2)), 7);
+});
+
+test("calcularMinutosSemana no modifica la entrada", () => {
+  const sesiones = [{ id: 1, fecha: "2026-10-01", tema: "a", minutos: 10 }];
+  const copia = JSON.stringify(sesiones);
+  calcularMinutosSemana(sesiones, new Date(2026, 9, 2));
+  assert.strictEqual(JSON.stringify(sesiones), copia);
+});
+
+test("calcularMinutosSemana con hoy lunes solo cuenta hoy", () => {
+  const sesiones = [
+    { fecha: "2026-09-27", minutos: 50 },
+    { fecha: "2026-09-28", minutos: 25 },
+    { fecha: "2026-09-29", minutos: 40 },
+  ];
+  assert.strictEqual(calcularMinutosSemana(sesiones, new Date(2026, 8, 28)), 25);
+});
+
+// Semana de prueba: hoy = viernes 2026-10-02, lunes = 2026-09-28
+function progreso(minutos, objetivo) {
+  const sesiones = [{ fecha: "2026-09-29", minutos: minutos }];
+  return calcularProgresoSemanal(sesiones, objetivo, new Date(2026, 9, 2));
+}
+
+test("calcularProgresoSemanal 0/1 es 0 % y no cumplido", () => {
+  const p = calcularProgresoSemanal([], 1, new Date(2026, 9, 2));
+  assert.strictEqual(p.minutos, 0);
+  assert.strictEqual(p.porcentaje, 0);
+  assert.strictEqual(p.anchoBarra, 0);
+  assert.strictEqual(p.cumplido, false);
+  assert.strictEqual(p.texto, "0 / 1 min (0 %)");
+});
+
+test("calcularProgresoSemanal 150/300 es 50 %", () => {
+  const p = progreso(150, 300);
+  assert.strictEqual(p.porcentaje, 50);
+  assert.strictEqual(p.anchoBarra, 50);
+  assert.strictEqual(p.cumplido, false);
+});
+
+test("calcularProgresoSemanal 299/300 redondea a 100 % pero no está cumplido", () => {
+  const p = progreso(299, 300);
+  assert.strictEqual(p.porcentaje, 100);
+  assert.strictEqual(p.cumplido, false);
+});
+
+test("calcularProgresoSemanal 300/300 es 100 % y cumplido", () => {
+  const p = progreso(300, 300);
+  assert.strictEqual(p.porcentaje, 100);
+  assert.strictEqual(p.cumplido, true);
+});
+
+test("calcularProgresoSemanal 350/300 pasa de 100 % pero la barra se limita", () => {
+  const p = progreso(350, 300);
+  assert.strictEqual(p.minutos, 350);
+  assert.strictEqual(p.objetivo, 300);
+  assert.strictEqual(p.porcentaje, 117);
+  assert.strictEqual(p.anchoBarra, 100);
+  assert.strictEqual(p.cumplido, true);
+  assert.strictEqual(p.texto, "350 / 300 min (117 %)");
 });

@@ -15,6 +15,8 @@ sistema (Georgia para títulos).
 en `logica.js` (`construirMapaCalor`, `calcularNivel`, ...) con 34 tests en
 `logica.test.js` (`node --test`); `pintarMapaCalor` en `app.js`. Spec 004 validada y
 APROBADA por el usuario: estado "implementada".
+- Spec 005 (objetivo semanal) en curso: T1-T6 hechas (T6: HTML/CSS del bloque, sin JS; `[hidden]` de `.objetivo-cumplido` necesita regla propia por su `display`) (`validarObjetivo`, `calcularLunes`,
+`leerObjetivoGuardado`, `calcularMinutosSemana`, `calcularProgresoSemanal`, constantes `OBJETIVO_MIN/MAX` en `logica.js`). T7 hecha (`pintarObjetivo`, `cargarObjetivo`, `CLAVE_OBJETIVO` en `app.js`; aún sin guardar desde el formulario). T8 hecha (submit de `#formulario-objetivo`, `guardarObjetivo`, `rellenarFormularioObjetivo`; el campo solo se rellena al cargar/guardar, no en `pintar()`). T9 hecha (botón "Quitar objetivo" con `confirm()`, `quitarObjetivoGuardado`; si `removeItem` falla se muestra el error de guardado y se mantiene el objetivo). Siguiente: T10 (verificación final).
 - Datos en localStorage.
 - `docs/constitution.md` creado (6 principios innegociables), aprobado por el usuario.
 - `README.md` añadido a petición del usuario (describe el proyecto).

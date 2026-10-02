@@ -108,6 +108,43 @@ h2 {
   margin-bottom: 32px;
 }
 
+.objetivo-vacio {
+  margin: 0 0 4px;
+  color: var(--tinta-suave);
+  font-size: 0.95rem;
+}
+
+.objetivo-texto {
+  margin: 8px 0;
+  font-weight: 600;
+}
+
+.barra {
+  height: 14px;
+  overflow: hidden;
+  background: var(--linea);
+  border-radius: 7px;
+}
+
+.barra-relleno {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--boli);
+}
+
+.objetivo-cumplido {
+  display: inline-block;
+  margin: 12px 0 0;
+  padding: 0 6px;
+  font-weight: 700;
+  background: linear-gradient(transparent 40%, var(--resaltador) 40%);
+}
+
+.objetivo-cumplido[hidden] {
+  display: none;
+}
+
 .mapa-cuerpo {
   display: flex;
   gap: 6px;
